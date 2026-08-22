@@ -1,0 +1,225 @@
+// Abstract Class
+abstract class FoodOrder {
+
+    // Private data members
+    private int orderId;
+    private String customerName;
+    private double amount;
+
+    // Static members
+    private static String restaurantName = "Food Express";
+    private static int objectCounter = 0;
+
+    // Constructor
+    public FoodOrder(String customerName, double amount) {
+        objectCounter++;
+        this.orderId = objectCounter;
+        this.customerName = customerName;
+        this.amount = amount;
+    }
+
+    // Getters
+    public int getOrderId() {
+        return orderId;
+    }
+
+    public String getCustomerName() {
+        return customerName;
+    }
+
+    public double getAmount() {
+        return amount;
+    }
+
+    // Setters
+    public void setCustomerName(String customerName) {
+        this.customerName = customerName;
+    }
+
+    public void setAmount(double amount) {
+        this.amount = amount;
+    }
+
+    // Static getter
+    public static String getRestaurantName() {
+        return restaurantName;
+    }
+
+    // Static setter
+    public static void setRestaurantName(String name) {
+        restaurantName = name;
+    }
+
+    // Abstract method
+    public abstract double calculateDeliveryCharge();
+
+    // Static method
+    public static void displayTotalOrders() {
+        System.out.println("\nTotal Orders Created: " + objectCounter);
+    }
+}
+
+
+// Interface
+interface Discountable {
+
+    double applyDiscount();
+}
+
+
+// Regular Order Class
+class RegularOrder extends FoodOrder implements Discountable {
+
+    public RegularOrder(String customerName, double amount) {
+        super(customerName, amount);
+    }
+
+    // Method overriding
+    @Override
+    public double calculateDeliveryCharge() {
+        return 80;
+    }
+
+    // 10% discount
+    @Override
+    public double applyDiscount() {
+        return getAmount() * 0.10;
+    }
+}
+
+
+// Premium Order Class
+class PremiumOrder extends FoodOrder implements Discountable {
+
+    public PremiumOrder(String customerName, double amount) {
+        super(customerName, amount);
+    }
+
+    // Method overriding
+    @Override
+    public double calculateDeliveryCharge() {
+        return 50;
+    }
+
+    // 15% discount
+    @Override
+    public double applyDiscount() {
+        return getAmount() * 0.15;
+    }
+}
+
+
+// Utility Class
+class OrderUtility {
+
+    // Validate amount
+    public static boolean validateAmount(double amount) {
+        return amount > 0;
+    }
+
+    // Validate customer name
+    public static boolean validateCustomerName(String name) {
+        return name != null && !name.trim().isEmpty();
+    }
+
+    // Generate order summary
+    public static void generateOrderSummary(FoodOrder order) {
+
+        double bill = order.getAmount();
+
+        // Type casting to interface
+        Discountable discountable = (Discountable) order;
+
+        double discount = discountable.applyDiscount();
+
+        double deliveryCharge =
+                order.calculateDeliveryCharge();
+
+        double finalAmount =
+                bill - discount + deliveryCharge;
+
+        System.out.println("\n--------------------------------");
+
+        System.out.println("Restaurant Name: " +
+                FoodOrder.getRestaurantName());
+
+        System.out.println("Order ID: " +
+                order.getOrderId());
+
+        System.out.println("Customer Name: " +
+                order.getCustomerName());
+
+        System.out.println("Bill Amount: Rs. " +
+                bill);
+
+        System.out.println("Discount: Rs. " +
+                discount);
+
+        System.out.println("Delivery Charge: Rs. " +
+                deliveryCharge);
+
+        System.out.println("Final Payable Amount: Rs. " +
+                finalAmount);
+
+        System.out.println("--------------------------------");
+    }
+}
+
+
+// Main Class
+public class Main {
+
+    public static void main(String[] args) {
+
+        // Array of FoodOrder
+        FoodOrder[] orders = new FoodOrder[6];
+
+
+        // Creating 6 orders
+
+        orders[0] =
+                new RegularOrder("Aman", 500);
+
+        orders[1] =
+                new PremiumOrder("Rahul", 1000);
+
+        orders[2] =
+                new RegularOrder("Priya", 750);
+
+        orders[3] =
+                new PremiumOrder("Neha", 1200);
+
+        orders[4] =
+                new RegularOrder("Rohit", 600);
+
+        orders[5] =
+                new PremiumOrder("Simran", 1500);
+
+
+        System.out.println(
+                "===== ONLINE FOOD DELIVERY SYSTEM =====");
+
+
+        // Display details of all orders
+        for (int i = 0; i < orders.length; i++) {
+
+            if (OrderUtility.validateCustomerName(
+                    orders[i].getCustomerName())
+                    &&
+                OrderUtility.validateAmount(
+                    orders[i].getAmount())) {
+
+                OrderUtility.generateOrderSummary(
+                        orders[i]);
+
+            } else {
+
+                System.out.println("Invalid Order!");
+            }
+        }
+
+
+        // Display total orders
+        FoodOrder.displayTotalOrders();
+    }
+}
