@@ -1,0 +1,224 @@
+// Abstract Class
+abstract class LibraryResource {
+
+    private int resourceId;
+    private String title;
+    private String author;
+
+    private static String libraryName = "Smart University Library";
+    private static int objectCounter = 0;
+
+    // Constructor
+    public LibraryResource(int resourceId, String title, String author) {
+
+        objectCounter++;
+
+        this.resourceId = resourceId;
+        this.title = title;
+        this.author = author;
+    }
+
+    // Getters
+    public int getResourceId() {
+        return resourceId;
+    }
+
+    public String getTitle() {
+        return title;
+    }
+
+    public String getAuthor() {
+        return author;
+    }
+
+    // Setters
+    public void setTitle(String title) {
+        this.title = title;
+    }
+
+    public void setAuthor(String author) {
+        this.author = author;
+    }
+
+    // Protected method
+    protected String getBasicDetails() {
+        return "Resource ID: " + resourceId +
+               "\nTitle: " + title +
+               "\nAuthor: " + author;
+    }
+
+    // Static method
+    public static void displayTotalResources() {
+        System.out.println("\nTotal Resources Created: " + objectCounter);
+    }
+
+    public static String getLibraryName() {
+        return libraryName;
+    }
+
+    // Abstract method
+    public abstract double calculateFine(int overdueDays);
+}
+
+
+// Interface
+interface Printable {
+
+    void printDetails();
+}
+
+
+// Book Class
+class Book extends LibraryResource implements Printable {
+
+    public Book(int resourceId, String title, String author) {
+        super(resourceId, title, author);
+    }
+
+    // Fine = Rs. 5 per day
+    @Override
+    public double calculateFine(int overdueDays) {
+        return overdueDays * 5;
+    }
+
+    // Print details
+    @Override
+    public void printDetails() {
+
+        System.out.println("\n----- BOOK DETAILS -----");
+        System.out.println(getBasicDetails());
+        System.out.println("Resource Type: Book");
+    }
+}
+
+
+// Digital Resource Class
+class DigitalResource extends LibraryResource implements Printable {
+
+    public DigitalResource(int resourceId, String title, String author) {
+        super(resourceId, title, author);
+    }
+
+    // Fine = Rs. 2 per day
+    @Override
+    public double calculateFine(int overdueDays) {
+        return overdueDays * 2;
+    }
+
+    // Print details
+    @Override
+    public void printDetails() {
+
+        System.out.println("\n----- DIGITAL RESOURCE DETAILS -----");
+        System.out.println(getBasicDetails());
+        System.out.println("Resource Type: Digital Resource");
+    }
+}
+
+
+// Utility Class
+class InputValidator {
+
+    // Resource ID should be greater than 0
+    public static boolean validateResourceId(int resourceId) {
+        return resourceId > 0;
+    }
+
+    // Overdue days should be greater than or equal to 0
+    public static boolean validateFineDays(int overdueDays) {
+        return overdueDays >= 0;
+    }
+}
+
+
+// Main Class
+public class Main {
+
+    public static void main(String[] args) {
+
+        // Create array to store 5 resources
+        LibraryResource[] resources = new LibraryResource[5];
+
+
+        // Creating objects
+
+        resources[0] =
+                new Book(101, "Java Programming", "James Gosling");
+
+        resources[1] =
+                new DigitalResource(102, "Data Structures", "Mark Allen");
+
+        resources[2] =
+                new Book(103, "Database Management", "Raghu Ramakrishnan");
+
+        resources[3] =
+                new DigitalResource(104, "Artificial Intelligence", "Stuart Russell");
+
+        resources[4] =
+                new Book(105, "Computer Networks", "Andrew Tanenbaum");
+
+
+        // Overdue days for each resource
+        int[] overdueDays = {5, 3, 0, 7, 2};
+
+
+        System.out.println(
+                "===== SMART LIBRARY RESOURCE MANAGEMENT SYSTEM =====");
+
+        System.out.println(
+                "Library Name: " + LibraryResource.getLibraryName());
+
+
+        double totalFine = 0;
+
+
+        // Display details and calculate fine
+
+        for (int i = 0; i < resources.length; i++) {
+
+            // Validate Resource ID
+            if (InputValidator.validateResourceId(
+                    resources[i].getResourceId())
+                    &&
+                InputValidator.validateFineDays(
+                    overdueDays[i])) {
+
+                // Convert LibraryResource to Printable
+                Printable p = (Printable) resources[i];
+
+                // Display complete details
+                p.printDetails();
+
+                // Calculate fine
+                double fine =
+                        resources[i].calculateFine(overdueDays[i]);
+
+                System.out.println(
+                        "Overdue Days: " + overdueDays[i]);
+
+                System.out.println(
+                        "Fine: Rs. " + fine);
+
+                // Add to total fine
+                totalFine = totalFine + fine;
+
+            } else {
+
+                System.out.println("\nInvalid Resource Data!");
+            }
+        }
+
+
+        // Display total fine
+        System.out.println(
+                "\n======================================");
+
+        System.out.println(
+                "Total Fine of All Overdue Resources: Rs. "
+                + totalFine);
+
+
+        // Display total resources created
+        LibraryResource.displayTotalResources();
+    }
+}
